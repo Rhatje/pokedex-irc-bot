@@ -1,0 +1,21 @@
+{
+  "name": "pokedex",
+  "version": "2.0.0-alpha",
+  "description": "Multi purpose irc bot written in nodejs",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jeroen Deviaene",
+  "license": "MIT",
+  "dependencies": {
+    "irc": "^0.5.0",
+    "wikipedia-js": "0.0.6"
+  },
+  "devDependencies": {
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-es2015": "^6.9.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2"
+  }
+}
