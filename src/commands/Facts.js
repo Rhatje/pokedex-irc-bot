@@ -3,6 +3,7 @@
 const fs = require('fs');
 
 import Cache from '../common/Cache.js';
+import Channel from '../common/Channel.js';
 import Config from '../config.js';
 
 /**
@@ -48,7 +49,7 @@ export default class Facts {
             // Save all facts
 	    this.saveFacts(facts); 
 	}
-	else if ((matches = command.match(/^!([\w\d-]+)/)) && matches !== null) {
+	else if ((matches = command.match(/^!([\w\d-]+)(\s(.*?))?$/)) && matches !== null) {
 	    
 	    // Is this fact in the cache?
             if (matches.length < 2 || !facts.hasOwnProperty(matches[1])) {
@@ -62,10 +63,31 @@ export default class Facts {
 	    facts[matches[1]][2] = facts[matches[1]][2] + 1;
 	    this.saveFacts(facts);
 
-	    // Send the value back
-            callBack(f[1]);
+	    // Replace parameters
+	    var fact = f[1];
+	    fact = fact.replace(/%user%/g, from);
+	    fact = fact.replace(/%randomuser%/g, function(){
+		var users = Channel.instance.get(to).users;
+    	        var ruser;
+	        if (users.length === 0) {
+		    ruser = from;
+	        } else {
+		    ruser = users[Math.floor(Math.random() * users.length)];
+	        }
 
-	} 
+		return ruser;
+	    });
+	    fact = fact.replace(/%param(:(.*?))?%/g, function (a, b, def) {
+		if (matches.length > 3 && matches[3] !== undefined) 
+		    return matches[3];
+		else
+		    return def;
+	    }); 
+	    
+	    // Send the value back
+            callBack(fact);
+
+	}
 
     };
 
@@ -98,6 +120,8 @@ export default class Facts {
      *	Save the facts to the cache and to a file
      */
     static saveFacts(facts) {
+
+	if (JSON.stringify(facts).length === 0) return;
 
 	// Save the list to the cache
 	Cache.instance.put(this.factsCacheSlug, -1, JSON.stringify(facts));
