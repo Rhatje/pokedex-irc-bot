@@ -4,6 +4,7 @@ import Config from './config.js';
 // Command classes
 import Countdown from './commands/Countdown.js';
 import Facts from './commands/Facts.js';
+import PokedexCommand from './commands/PokedexCommand.js';
 import User from './commands/User.js';
 import Wiki from './commands/Wiki.js';
 
@@ -19,10 +20,11 @@ export default class Pokedex {
 
         // Classes
         var classes = [
-	    Countdown,
-	    User,
+	    	Countdown,
+	    	PokedexCommand,
+	    	User,
             Wiki,
-	    Facts
+	    	Facts
         ];
 
         // Load a list of Commands
@@ -68,7 +70,7 @@ export default class Pokedex {
 	    }(channel, client));
 
 	}
-	
+
 	// Create an event for incomming messages
 	var client = this.client;
 	var commands = this.commands;
@@ -84,7 +86,7 @@ export default class Pokedex {
 
 	    // Loop over commands to match one of them
 	    for (var i in commands) {
-   	        var regex = i;		
+   	        var regex = i;
                 if (message.match(new RegExp(regex))) {
 		    commands[regex].doCommand(message, from, to, (msg) => {
 			if (msg.indexOf("/me ") === 0)
