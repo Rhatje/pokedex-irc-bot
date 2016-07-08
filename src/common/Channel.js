@@ -1,5 +1,3 @@
-import Cache from './Cache.js';
-
 export default class Channel {
     channelObj = null;
     channels = {};
@@ -8,26 +6,26 @@ export default class Channel {
      *	Get the available instance for this class
      */
     static get instance() {
-	if (this.channelObj === null || this.channelObj === undefined) {
-	    this.channelObj = new Channel();
-	}
+    	if (this.channelObj === null || this.channelObj === undefined) {
+    	    this.channelObj = new Channel();
+    	}
 
-	return this.channelObj;
+    	return this.channelObj;
     }
 
 
     constructor() {
-	this.channels = {};
+	    this.channels = {};
     }
 
     /**
      *	Get an instance for a specific channel
      */
     get(channel) {
-	if (this.channels.hasOwnProperty(channel))
-	    return this.channels[channel];
- 	else
-	    return {users:[]};
+    	if (this.channels.hasOwnProperty(channel))
+    	    return this.channels[channel];
+     	else
+    	    return {users:[]};
     }
 
 
@@ -35,7 +33,7 @@ export default class Channel {
      *	Set data for this channel
      */
     set(channel, data) {
-	this.channels[channel] = data;
+	    this.channels[channel] = data;
     }
 
 }
