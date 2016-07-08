@@ -5,6 +5,7 @@ const fs = require('fs');
 import Cache from '../common/Cache.js';
 import Channel from '../common/Channel.js';
 import Config from '../config.js';
+import Log from '../common/Log.js';
 
 /**
  *  !facts - Learn and display facts created by users
@@ -37,13 +38,15 @@ export default class Facts {
 		    var f = facts[matches[1]];
 		    callBack("I learned " + matches[1]  + " from " + f[0]  + "! It has been used " + f[2] + " times.");
 		}
-		else if ((matches = command.match(new RegExp("^" + Config.irc.botname + ": !([\\w\\d-]+)(\\[(del)?\\])?( ([\\w\\d].*?))?$"))) && matches !== null)
+		else if ((matches = command.match(new RegExp("^" + Config.irc.botname + ": !([\\w\\d-]+)(\\[(del)?\\])?( ([\\w\\d\\s\\/-].*?))?$"))) && matches !== null)
 		{
 		    // Create the fact in the list
 		    if (matches[2] === "[]") {
 				if (facts.hasOwnProperty(matches[1]) && typeof (facts[matches[1]][1] === "object")) {
+					this.log(from + " added to !" + matches[1] + "[]: " + matches[5]);
 				    facts[matches[1]][1].push(matches[5]);
 				} else {
+					this.log(from + " created !" + matches[1] + "[]: " + matches[5]);
 				    facts[matches[1]] = [
 				    	from,
 				    	[matches[5]],
@@ -52,6 +55,7 @@ export default class Facts {
 		    	}
 		    } else if (matches[2] === "[del]") {
 		    	if (facts.hasOwnProperty(matches[1]) && typeof (facts[matches[1]][1] === "object")) {
+		    		this.log(from + " removed all replies for !" + matches[1]);
 				    delete facts[matches[1]];
 				    callBack("All !" + matches[1] + " responses have been removed by " + from + ", blame him/her!");
 				}
@@ -59,6 +63,7 @@ export default class Facts {
 		    	if (facts.hasOwnProperty(matches[1]) && typeof (facts[matches[1]] === "object")) {
 					callBack(matches[1] + " is an array, use !" + matches[1] + "[] to add a value.");
 		    	} else {
+		    		this.log(from + " created !" + matches[1] + ": " + matches[5]);
 			    	facts[matches[1]] = [
 					    from,
 					    matches[5],
@@ -143,18 +148,25 @@ export default class Facts {
     }
 
 
+	/**
+	 *	Log a message
+	 */
+	static log(message) {
+		Log.log("[Facts] " + message);
+	}
+
     /**
      *	Save the facts to the cache and to a file
      */
     static saveFacts(facts) {
 
-	if (JSON.stringify(facts).length === 0) return;
+		if (JSON.stringify(facts).length === 0) return;
 
-	// Save the list to the cache
-	Cache.instance.put(this.factsCacheSlug, -1, JSON.stringify(facts));
+		// Save the list to the cache
+		Cache.instance.put(this.factsCacheSlug, -1, JSON.stringify(facts));
 
-	// Save the list to the file
-	fs.writeFile(__dirname + '/../facts.json', JSON.stringify(facts));
+		// Save the list to the file
+		fs.writeFile(__dirname + '/../facts.json', JSON.stringify(facts));
 
     }
 
