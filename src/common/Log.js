@@ -8,9 +8,9 @@ export default class Log {
 
         console.log(
             "[" +
-    	    date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).substring(0, 2) + "-" + ("0" + date.getDate()).substring(0, 2) +
+    	    date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2) +
     	    " " +
-    	    date.getHours() + ":" + date.getMinutes() +
+    	    ("0" + date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2) +
     	    "] " +
             message +
 	        (user ? " (" + user + ")" : "")
