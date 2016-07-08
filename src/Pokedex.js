@@ -2,6 +2,7 @@ import Channel from './common/Channel.js';
 import Config from './config.js';
 
 // Command classes
+import Countdown from './commands/Countdown.js';
 import Facts from './commands/Facts.js';
 import User from './commands/User.js';
 import Wiki from './commands/Wiki.js';
@@ -18,6 +19,7 @@ export default class Pokedex {
 
         // Classes
         var classes = [
+	    Countdown,
 	    User,
             Wiki,
 	    Facts
