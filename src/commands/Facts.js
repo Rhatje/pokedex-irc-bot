@@ -93,7 +93,7 @@ export default class Facts {
 
 		    // Replace parameters
 		    fact = fact.replace(/%user%/g, from);
-		    fact = fact.replace(/%randomuser%/g, function(){
+		    fact = fact.replace(/%randomuser%/g, function () {
 				var users = Channel.instance.get(to).users;
 		        var ruser;
 		        if (users.length === 0) {

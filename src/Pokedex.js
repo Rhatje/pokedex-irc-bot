@@ -74,6 +74,10 @@ export default class Pokedex {
 	var commands = this.commands;
 	this.client.addListener('message', (from, to, message) => {
 
+	    // Only read messages from channels or admins
+	    if (Config.irc.channels.indexOf(to) === -1 && Config.irc.admins.indexOf(from) === -1)
+		return;
+
 	    // Loop over commands to match one of them
 	    for (var i in commands) {
    	        var regex = i;		
