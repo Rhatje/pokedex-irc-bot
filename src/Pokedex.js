@@ -78,6 +78,10 @@ export default class Pokedex {
 	    if (Config.irc.channels.indexOf(to) === -1 && Config.irc.admins.indexOf(from) === -1)
 		return;
 
+	    // Don't reply to your own messages! moron!
+	    if (Config.irc.botname === from)
+		return;
+
 	    // Loop over commands to match one of them
 	    for (var i in commands) {
    	        var regex = i;		
