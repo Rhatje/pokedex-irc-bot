@@ -87,7 +87,10 @@ export default class Pokedex {
    	        var regex = i;		
                 if (message.match(new RegExp(regex))) {
 		    commands[regex].doCommand(message, from, to, (msg) => {
-		        client.say(to, msg);
+			if (msg.indexOf("/me ") === 0)
+			    client.action(to, msg.substr(4));
+			else
+		            client.say(to, msg);
 		    });
 	 	    break;
 	        }
