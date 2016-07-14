@@ -140,7 +140,7 @@ export default class Facts {
 
 	// Load existing facts from file
 	var fcs = this.factsCacheSlug;
-	fs.readFile(__dirname + '/../facts.json', function(err, data){
+	fs.readFile(__dirname + '/../data/facts.json', function(err, data){
 	    if (err) return;
 	    Cache.instance.put(fcs, -1, data);
 	});
@@ -166,7 +166,7 @@ export default class Facts {
 		Cache.instance.put(this.factsCacheSlug, -1, JSON.stringify(facts));
 
 		// Save the list to the file
-		fs.writeFile(__dirname + '/../facts.json', JSON.stringify(facts));
+		fs.writeFile(__dirname + '/../data/facts.json', JSON.stringify(facts));
 
     }
 

@@ -10,7 +10,7 @@ export default class Countdown {
 
 		// Get the data from a file.
 		// This way we can update the date without restarting Pokedex
-		var file = __dirname + "/../countdown.json";
+		var file = __dirname + "/../data/countdown.json";
 		fs.exists(file, (exists) => {
 		    if (!exists) return;
 
@@ -25,8 +25,10 @@ export default class Countdown {
 				data = JSON.parse(data);
 				if (data.hasOwnProperty(to)) {
 					data = data[to];
-				} else {
+				} else if (data.hasOwnProperty("default")) {
 					data = data["default"];
+				} else {
+					callBack("No countdown is set, blame Nuva!");
 				}
 
 				// Calculate the difference
