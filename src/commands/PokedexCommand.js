@@ -22,7 +22,7 @@ export default class PokedexCommand {
 			}
 
 			// Request new data from the official pokemon website
-		    request("http://www.pokemon.com/us/pokedex/" + p, function(error, response, html){
+		    request("http://www.pokemon.com/us/pokedex/" + p, function (error, response, html) {
 				if (!error) {
 					var $ = cheerio.load(html);
 					var desc = $(".version-descriptions p");

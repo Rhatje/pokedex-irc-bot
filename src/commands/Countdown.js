@@ -5,78 +5,87 @@ import Log from '../common/Log.js';
 export default class Countdown {
 
     static doCommand(command, from, to, callBack) {
-	if (typeof callBack !== "function")
-	    callBack = (msg) => {};
-	
-	// Get the data from a file.
-	// This way we can update the date without restarting Pokedex
-	var file = __dirname + "/../countdown.json";
-	fs.exists(file, (exists) => {
-	    if (!exists)
-		return;
+		if (typeof callBack !== "function")
+		    callBack = (msg) => {};
 
-	    // Parse data
-	    fs.readFile(file, (err, data) => {
-		if (err) {
-		    Log.log("countdown - " + err);
-		    return;
-		}
+		// Get the data from a file.
+		// This way we can update the date without restarting Pokedex
+		var file = __dirname + "/../countdown.json";
+		fs.exists(file, (exists) => {
+		    if (!exists) return;
 
-		// Parse json data
-		data = JSON.parse(data);
+		    // Parse data
+		    fs.readFile(file, (err, data) => {
+				if (err) {
+				    this.log("error: " + err);
+				    return;
+				}
 
-		// Calculate the difference
-	    	var now = new Date();
-	    	var diff = data.time - now.getTime();
-	    	if (diff < 0) {
-		    callBack("Tis al gepasseert...");
-	            return;
-	     	}
-	
-           	var day = Math.floor(diff / 86400000);
-	   	 diff = diff - (day * 86400000);
+				// Parse json data and find the correct event
+				data = JSON.parse(data);
+				if (data.hasOwnProperty(to)) {
+					data = data[to];
+				} else {
+					data = data["default"];
+				}
 
-	    	var week = Math.floor(day / 7);
-	    	day = day - (week * 7); 
+				// Calculate the difference
+		    	var now = new Date();
+		    	var diff = data.time - now.getTime();
+		    	if (diff < 0) {
+			    	callBack("Tis al gepasseert...");
+		            return;
+		     	}
 
-	    	var hour = Math.floor(diff / 3600000);
-	    	diff = diff - (hour * 3600000);
+	           	var day = Math.floor(diff / 86400000);
+		   		diff = diff - (day * 86400000);
 
-	    	var minute = Math.floor(diff / 60000);
-	    	diff = diff - (minute * 60000);
+		    	var week = Math.floor(day / 7);
+		    	day = day - (week * 7);
 
-	    	var str = "Nog ";
-	    	if (week > 0)
-		    str += week + (week > 1 ? " weken, " : " week, ");
+		    	var hour = Math.floor(diff / 3600000);
+		    	diff = diff - (hour * 3600000);
 
-	    	if (day > 0)
-		    str += day + (day > 1 ? " dagen, " : " dag, ");
+		    	var minute = Math.floor(diff / 60000);
+		    	diff = diff - (minute * 60000);
 
-    	    	if (hour > 0)
-		    str += hour + " uur, ";
+		    	var str = "Nog ";
+		    	if (week > 0)
+			    str += week + (week > 1 ? " weken, " : " week, ");
 
-	    	if (minute > 0)
-	 	    str += minute + (minute > 1 ? " minuten " : " minuut ");
+		    	if (day > 0)
+			    str += day + (day > 1 ? " dagen, " : " dag, ");
 
-	    	var second = Math.floor(diff / 1000);
-	    	if (second > 0)
-		    str += "en " + second + (second > 1 ? " seconden " : " second ");
+	    	    	if (hour > 0)
+			    str += hour + " uur, ";
 
-	    	if (data.event)
-		    str += "tot " + data.event + "!";
+		    	if (minute > 0)
+		 	    str += minute + (minute > 1 ? " minuten " : " minuut ");
 
-	    	callBack(str);
+		    	var second = Math.floor(diff / 1000);
+		    	if (second > 0)
+			    str += "en " + second + (second > 1 ? " seconden " : " second ");
 
-	    });
-	});
+		    	if (data.event)
+			    str += "tot " + data.event + "!";
+
+		    	callBack(str);
+
+		    });
+		});
 
     }
 
 
     static getCommands() {
-	return [
-	    '!countdown'
-	];
+		return [
+		    '!countdown'
+		];
+    }
+
+
+    static log(msg) {
+    	Log.log("[Countdown] " + msg);
     }
 
 }
