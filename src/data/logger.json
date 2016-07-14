@@ -1,0 +1,8 @@
+{
+    "db": {
+        "host": "localhost",
+        "username": "irc_logger",
+        "password": "irc_logger",
+        "database": "irc_logger"
+    }
+}
