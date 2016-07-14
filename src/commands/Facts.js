@@ -1,6 +1,7 @@
 "use strict";
 
 const fs = require('fs');
+const PastebinAPI = require('pastebin-js');
 
 import Cache from '../common/Cache.js';
 import Channel from '../common/Channel.js';
@@ -26,6 +27,53 @@ export default class Facts {
 		if (command === "!facts")
 		{
 		    callBack("I know " + Object.keys(facts).length + " facts!");
+		}
+		else if (command === "!factlist")
+		{
+			// Do we have a list in cache?
+			if (Cache.instance.get("pastebin_facts")) {
+				callBack(Cache.instance.get("pastebin_facts"));
+				return;
+			}
+
+			// Find pastebin dev key
+			fs.readFile(__dirname + "/../data/pastebin.json", function (err, data) {
+				if (err) {
+					console.log("Error reading pastebin settings: " + err);
+				}
+
+				// Get pastebin settings
+				data = JSON.parse(data);
+				if (!data.hasOwnProperty("devkey")) {
+					callBack("Pastebin devkey is not set!");
+					return;
+				}
+
+				// Get pastebin object
+				var pastebin = new PastebinAPI(data.devkey);
+
+				// Create new string with facts
+				var fstring = "";
+				for (fact in facts) {
+					fstring += fact + ":" + new Array(30 - fact.length).join(" ") + facts[fact][1] + "\r\n";
+				}
+
+				pastebin.createPaste({
+			        text: fstring,
+			        title: "Pokedex facts",
+			        format: null,
+			        privacy: 1,
+			        expiration: '1H'
+			    })
+			    .then(function (data) {
+
+			    	// Keep the link in cache for one hour
+			    	Cache.instance.put("pastebin_facts", 59, "These are all the facts: http://pastebin.com/" + data);
+
+					// Send the data back
+			    	callBack("These are all the facts: http://pastebin.com/" + data);
+			    });
+			});
 		}
 		else if ((matches = command.match(/^!fact ([\w\d-]+)/)) && matches !== null)
 		{
@@ -127,6 +175,7 @@ export default class Facts {
         return [
 	    "^" + Config.irc.botname + ": ![\\w\\d+](\\[(del)?\\])?",
 	    "^!facts$",
+	    "^!factlist$",
 	    "^!fact [\\w\\d-]+$",
 	    "^![\\w\\d]+"
         ];
@@ -135,15 +184,15 @@ export default class Facts {
 
     static init() {
 
-	// Set the cache slug
-	this.factsCacheSlug = "facts_cache";
+		// Set the cache slug
+		this.factsCacheSlug = "facts_cache";
 
-	// Load existing facts from file
-	var fcs = this.factsCacheSlug;
-	fs.readFile(__dirname + '/../data/facts.json', function(err, data){
-	    if (err) return;
-	    Cache.instance.put(fcs, -1, data);
-	});
+		// Load existing facts from file
+		var fcs = this.factsCacheSlug;
+		fs.readFile(__dirname + '/../data/facts.json', function(err, data){
+		    if (err) return;
+		    Cache.instance.put(fcs, -1, data);
+		});
 
     }
 

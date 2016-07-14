@@ -29,6 +29,7 @@ export default class Countdown {
 					data = data["default"];
 				} else {
 					callBack("No countdown is set, blame Nuva!");
+					return;
 				}
 
 				// Calculate the difference

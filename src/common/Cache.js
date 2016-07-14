@@ -28,8 +28,8 @@ export default class Cache {
      */
     checkCacheAge() {
 		for (var key in this.cache) {
-	            if (this.cache[key].maxage > 0 && this.cache[key].maxage < new Date().getTime()) {
-			delete this.cache[key];
+            if (this.cache[key].maxage > 0 && this.cache[key].maxage < new Date().getTime()) {
+				delete this.cache[key];
 	 	    }
 		}
     }
@@ -53,7 +53,7 @@ export default class Cache {
     put(key, time, value) {
 	 	this.cache[key] = {
 		    value: value,
-		    maxage: time === -1 ? -1 : new Date().getTime() + (time * 60)
+		    maxage: time === -1 ? -1 : new Date().getTime() + (time * 6e4)
 		};
     }
 
