@@ -92,9 +92,14 @@ export default class Facts {
 				return;
 			}
 
+			if ((matches[5].match(/%randomuser%/ig) || []).length > 2) {
+				callBack(from + ": Stop annoying users!");
+				return;
+			}
+
 		    // Create the fact in the list
 		    if (matches[2] === "[]") {
-				if (facts.hasOwnProperty(matches[1]) && typeof (facts[matches[1]][1] === "object")) {
+				if (facts.hasOwnProperty(matches[1]) && typeof (facts[matches[1]][1]) === "object") {
 					this.log(from + " added to !" + matches[1] + "[]: " + matches[5]);
 				    facts[matches[1]][1].push(matches[5]);
 				} else {
