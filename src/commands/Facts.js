@@ -88,6 +88,10 @@ export default class Facts {
 		}
 		else if ((matches = command.match(new RegExp("^" + Config.irc.botname + ": !([\\w\\d-]+)(\\[(del)?\\])?( ([\\w\\d\\s\\/-].*?))?$"))) && matches !== null)
 		{
+			if (matches[5].lengh === 0) {
+				return;
+			}
+
 		    // Create the fact in the list
 		    if (matches[2] === "[]") {
 				if (facts.hasOwnProperty(matches[1]) && typeof (facts[matches[1]][1] === "object")) {
