@@ -65,12 +65,12 @@ export default class Cache {
 		var value = this.get(key);
 
 		// No value found, set value
-		if (value === null) {
+		if (!value) {
 		    value = callback();
 		}
 
 		// Refresh the time
-		this.putCache(key, time, value);
+		this.put(key, time, value);
 
 		// Return the value
 		return value;

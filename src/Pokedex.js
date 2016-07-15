@@ -3,6 +3,7 @@ import Config from './config.js';
 
 // Command classes
 import Countdown from './commands/Countdown.js';
+import EightBall from './commands/EightBall.js';
 import Facts from './commands/Facts.js';
 import Jokes from './commands/Jokes.js';
 import Logger from './commands/Logger.js';
@@ -24,6 +25,7 @@ export default class Pokedex {
         // Classes
         var classes = [
 	    	Countdown,
+	    	EightBall,
 	    	Jokes,
 	    	Logger,
 	    	PokedexCommand,

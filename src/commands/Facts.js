@@ -15,7 +15,7 @@ export default class Facts {
 
     static doCommand(command, from, to, callBack) {
 		if (typeof callBack !== "function")
-		    callBack = function(msg){};
+		    callBack = (msg) => {};
 
 	        // Load all available facts
 		var facts = JSON.parse(
@@ -108,7 +108,7 @@ export default class Facts {
 				    callBack("All !" + matches[1] + " responses have been removed by " + from + ", blame him/her!");
 				}
 		    } else {
-		    	if (facts.hasOwnProperty(matches[1]) && typeof (facts[matches[1]] === "object")) {
+		    	if (facts.hasOwnProperty(matches[1]) && typeof (facts[matches[1]][1] === "object")) {
 					callBack(matches[1] + " is an array, use !" + matches[1] + "[] to add a value.");
 		    	} else {
 		    		this.log(from + " created !" + matches[1] + ": " + matches[5]);
