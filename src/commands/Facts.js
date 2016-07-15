@@ -79,7 +79,7 @@ export default class Facts {
 		{
 		    // Is this fact in the cache?
 		    if (matches.length < 2 || !facts.hasOwnProperty(matches[1])) {
-			callBack("I do not know this fact");
+				callBack("I do not know this fact");
 		    }
 
 		    // Find the fact and its info
@@ -88,7 +88,7 @@ export default class Facts {
 		}
 		else if ((matches = command.match(new RegExp("^" + Config.irc.botname + ": !([\\w\\d-]+)(\\[(del)?\\])?( ([\\w\\d\\s\\/-].*?))?$"))) && matches !== null)
 		{
-			if (matches[5].lengh === 0) {
+			if (!matches[5] || matches[5].lengh === 0) {
 				return;
 			}
 
@@ -111,13 +111,13 @@ export default class Facts {
 				    ];
 		    	}
 		    } else if (matches[2] === "[del]") {
-		    	if (facts.hasOwnProperty(matches[1]) && typeof (facts[matches[1]][1] === "object")) {
+		    	if (facts.hasOwnProperty(matches[1]) && typeof (facts[matches[1]][1]) === "object") {
 		    		this.log(from + " removed all replies for !" + matches[1]);
 				    delete facts[matches[1]];
 				    callBack("All !" + matches[1] + " responses have been removed by " + from + ", blame him/her!");
 				}
 		    } else {
-		    	if (facts.hasOwnProperty(matches[1]) && typeof (facts[matches[1]][1] === "object")) {
+		    	if (facts.hasOwnProperty(matches[1]) && typeof (facts[matches[1]][1]) === "object") {
 					callBack(matches[1] + " is an array, use !" + matches[1] + "[] to add a value.");
 		    	} else {
 		    		this.log(from + " created !" + matches[1] + ": " + matches[5]);
