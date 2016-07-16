@@ -8,23 +8,7 @@ export default class Logger {
 
     static catchAll(from, to, message) {
 
-        // Get the connection object
-        let connection = Cache.instance.get("logger_connection");
-
-        // Insert the message
-        connection.query(
-            "INSERT INTO messages (channel, user, message) VALUES (?, ?, ?)",
-            [
-                to,
-                from,
-                message
-            ]
-        );
-
-    }
-
-    static init() {
-
+        // Get database info
         fs.readFile(__dirname + "/../data/logger.json", function (err, data) {
             if (err) {
                 console.log("Error reading logger.json: " + err);
@@ -33,18 +17,22 @@ export default class Logger {
 
             // Create mysql connection
             var config = JSON.parse(data);
-            let connection = mysql.createConnection({
-                socketPath: config.db.socket,
-                user: config.db.username,
-                password: config.db.password,
-                database: config.db.database
-            });
+            let connection = mysql.createConnection(config.db);
             connection.connect();
-            Cache.instance.put(
-                "logger_connection",
-                -1,
-                connection
+
+            // Insert the message
+            connection.query(
+                "INSERT INTO messages (channel, user, message) VALUES (?, ?, ?)",
+                [
+                    to,
+                    from,
+                    message
+                ]
             );
+
+            // Close the connection
+            connection.end();
+
 
         });
 
