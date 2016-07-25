@@ -7,7 +7,6 @@ import Log from '../common/Log.js';
 export default class Logger {
 
     static catchAll(from, to, message, raw) {
-        console.log(raw);
 
         // Get database info
         fs.readFile(__dirname + "/../data/logger.json", function (err, data) {
@@ -21,7 +20,73 @@ export default class Logger {
             let connection = mysql.createConnection(config.db);
             connection.connect();
 
-            // Find the channel in the db
+            // Get channel info and insert the message
+            Logger._getChannelAndUser(connection, raw, to, (userid) => {
+
+                connection.query(
+                    "INSERT INTO messages SET ?",
+                    {
+                        channel: to,
+                        nickname: from,
+                        user_id: userid,
+                        message: message
+                    },
+                    () => {
+                        connection.end();
+                    }
+                );
+
+            });
+
+        });
+
+    }
+
+    static doTopic(channel, topic, nick, raw) {
+
+        // Get database info
+        fs.readFile(__dirname + "/../data/logger.json", function (err, data) {
+            if (err) {
+                console.log("Error reading logger.json: " + err);
+                return;
+            }
+
+            // Create mysql connection
+            var config = JSON.parse(data);
+            let connection = mysql.createConnection(config.db);
+            connection.connect();
+
+            // Get channel info and insert the message
+            Logger._getChannelAndUser(connection, raw, channel, (userid) => {
+
+                connection.query(
+                    "INSERT INTO topics SET ?",
+                    {
+                        channel: channel,
+                        topic: topic,
+                        user_id: userid
+                    },
+                    () => {
+                        connection.end();
+                    }
+                );
+
+            });
+
+        });
+
+    }
+
+    static log(msg) {
+        Log.log("[Logger] " + msg);
+    }
+
+    /**
+     *  Make sure the channel exists in the database and get the user id
+     */
+    static _getChannelAndUser(connection, raw, to, callBack) {
+
+        // Find the channel in the db
             connection.query(
                 "SELECT name FROM channels WHERE name = ?",
                 [to],
@@ -43,23 +108,6 @@ export default class Logger {
                                     return;
                                 }
 
-                                var insertMessage = (channel, user, nick, message) => {
-
-                                    connection.query(
-                                        "INSERT INTO messages SET ?",
-                                        {
-                                            channel: channel,
-                                            nickname: nick,
-                                            user_id: user,
-                                            message: message
-                                        },
-                                        () => {
-                                            connection.end();
-                                        }
-                                    );
-
-                                };
-
                                 // New user?
                                 if (rows.length === 0) {
                                     connection.query(
@@ -75,14 +123,14 @@ export default class Logger {
                                             }
 
                                             // Insert worked, get the user info
-                                            insertMessage(channel, result.insertId, from, message);
+                                            callBack(result.insertId);
                                         }
                                     );
                                 } else {
-                                    insertMessage(channel, rows[0]["id"], from, message);
+                                    callBack(rows[0]["id"]);
                                 }
                             }
-                        )
+                        );
 
                     };
 
@@ -107,26 +155,5 @@ export default class Logger {
                 }
             );
 
-            // Insert the message
-            // connection.query(
-            //     "INSERT INTO messages (channel, user, message) VALUES (?, ?, ?)",
-            //     [
-            //         to,
-            //         from,
-            //         message
-            //     ]
-            // );
-
-            // Close the connection
-            //connection.end();
-
-
-        });
-
     }
-
-    static log(msg) {
-        Log.log("[Logger] " + msg);
-    }
-
 }
