@@ -1,7 +1,6 @@
 var fs = require("fs");
 var mysql = require("mysql");
 
-import Cache from '../common/Cache.js';
 import Log from '../common/Log.js';
 
 export default class Logger {
@@ -15,11 +14,8 @@ export default class Logger {
                 return;
             }
 
+            // No raw data, no log
             if (!raw) {
-                Log.log('---');
-                Log.log('No raw data found... (' + raw + ')');
-                Log.log(from + '@' + to + ': ' + message);
-                Log.log('---');
                 return;
             }
 
@@ -38,6 +34,48 @@ export default class Logger {
                         nickname: from,
                         user_id: userid,
                         message: message
+                    },
+                    () => {
+                        connection.end();
+                    }
+                );
+
+            });
+
+        });
+
+    }
+
+    static doKick(channel, nick, by, reason, raw) {
+
+        // Get database info
+        fs.readFile(__dirname + "/../data/logger.json", function (err, data) {
+            if (err) {
+                console.log("Error reading logger.json: " + err);
+                return;
+            }
+
+            // No raw data, no log
+            if (!raw) {
+                return;
+            }
+
+            // Create mysql connection
+            var config = JSON.parse(data);
+            let connection = mysql.createConnection(config.db);
+            connection.connect();
+
+            // Get channel info and insert the message
+            Logger._getChannelAndUser(connection, raw, channel, (userid) => {
+
+                connection.query(
+                    "INSERT INTO kicks SET ?",
+                    {
+                        target_nick: nick,
+                        kicker_id: userid,
+                        kicker_nick: by,
+                        reason: reason,
+                        channel: channel
                     },
                     () => {
                         connection.end();
@@ -93,6 +131,7 @@ export default class Logger {
      *  Make sure the channel exists in the database and get the user id
      */
     static _getChannelAndUser(connection, raw, to, callBack) {
+        console.log(raw);
 
         // Find the channel in the db
             connection.query(

@@ -37,6 +37,7 @@ export default class Pokedex {
         // Load a list of Commands
 		this.commands = {};
 		this.catchAlls = [];
+		this.doKicks = [];
 		this.doTopics = [];
         for (var i in classes) {
             var c = classes[i];
@@ -49,10 +50,13 @@ export default class Pokedex {
 		    if (c.catchAll)
 		    	this.catchAlls.push(c);
 
+			// Add kick catches
+			if (c.doKick)
+				this.doKicks.push(c);
+
 		    // Add topic catches
-		    if (c.doTopic) {
+		    if (c.doTopic)
 		    	this.doTopics.push(c);
-		    }
 
 			// Add commands to the list
 			if (c.getCommands) {
@@ -127,10 +131,17 @@ export default class Pokedex {
 		    }
 
         };
-		this.client.addListener('message', msgevent);
-		this.client.addListener('action', (from, to, message, raw) => {
+
+        this.client.addListener('action', (from, to, message, raw) => {
 			msgevent(from, to, "/me " + message, raw);
 		});
+		this.client.addListener('kick', (channel, nick, by, reason, message) => {
+			for (var i in this.doKicks) {
+		    	var dk = this.doKicks[i];
+		    	dk.doKick(channel, nick, by, reason, message);
+		    }
+		});
+		this.client.addListener('message', msgevent);
 		this.client.addListener('topic', (channel, topic, nick, raw) => {
 			for (var i in this.doTopics) {
 		    	var dt = this.doTopics[i];
