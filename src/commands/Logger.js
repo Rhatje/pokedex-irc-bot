@@ -15,6 +15,14 @@ export default class Logger {
                 return;
             }
 
+            if (!raw) {
+                Log.log('---');
+                Log.log('No raw data found... (' + raw + ')');
+                Log.log(from + '@' + to + ': ' + message);
+                Log.log('---');
+                return;
+            }
+
             // Create mysql connection
             var config = JSON.parse(data);
             let connection = mysql.createConnection(config.db);
