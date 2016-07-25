@@ -88,7 +88,7 @@ export default class Pokedex {
 
 		// Create an event for incomming messages
 		var commands = this.commands;
-		let msgevent = (from, to, message) => {
+		let msgevent = (from, to, message, raw) => {
 
 		    // Only read messages from channels or admins
 		    if (Config.irc.channels.indexOf(to) === -1 && Config.irc.admins.indexOf(from) === -1)
@@ -117,12 +117,14 @@ export default class Pokedex {
 		    // Send the message to the catchalls
 		    for (var i in this.catchAlls) {
 		    	var ca = this.catchAlls[i];
-		    	ca.catchAll(from, to, message);
+		    	ca.catchAll(from, to, message, raw);
 		    }
 
         };
 		this.client.addListener('message', msgevent);
-		this.client.addListener('action', (from, to, message) => { msgevent(from, to, "/me " + message); });
+		this.client.addListener('action', (from, to, message, raw) => {
+			msgevent(from, to, "/me " + message, raw);
+		});
 
 		// Connect to irc!
 		this.client.connect();
