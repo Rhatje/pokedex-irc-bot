@@ -86,9 +86,9 @@ export default class Facts {
 		    var f = facts[matches[1]];
 		    callBack("I learned " + matches[1]  + " from " + f[0]  + "! It has been used " + f[2] + " times.");
 		}
-		else if ((matches = command.match(new RegExp("^" + Config.irc.botname + ": !([\\w\\d-]+)(\\[(del)?\\])?( ([\\w\\d\\s\\/-].*?))?$"))) && matches !== null)
+		else if ((matches = command.match(new RegExp("^" + Config.irc.botname + ": !([\\w\\d-]+)(\\[(del)?\\])?( ([\\w\\d\\s\\/\\-\\%].*?))?$"))) && matches !== null)
 		{
-			if (!matches[5] || matches[5].lengh === 0) {
+          		if (!matches[5] || matches[5].lengh === 0) {
 				return;
 			}
 

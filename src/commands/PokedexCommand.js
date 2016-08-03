@@ -38,8 +38,9 @@ export default class PokedexCommand {
 
 					// Format the string a bit
 					desc = desc.text();
-					desc = desc.replace(/\s+/g, ' ');
+					desc = desc.replace(/^\s*(.*?)\s*$/, '$1');
 					desc = desc.replace(/(\.|,)([\w])/g, '$1 $2');
+					desc = desc.replace(/\s+/g, ' ');
 
 					// Put the data in the cache
 					Cache.instance.put('pokemon_' + p, 1440, desc);
