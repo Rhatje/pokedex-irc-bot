@@ -17,7 +17,7 @@ export default class Users {
         this.log(from + " requested a joke");
 
         // Check the joke credits
-        var credits = Cache.instance.get(this.cacheCreditSlug) || {};
+        var credits = JSON.parse(Cache.instance.get(this.cacheCreditSlug)) || {};
         if (!credits.hasOwnProperty(from)) {
             credits[from] = {
                 credits: this.initialCredits,
@@ -32,17 +32,18 @@ export default class Users {
         }
         credits[from].credits = credits[from].credits - 1;
         if (credits[from].credits === 0) {
-            credits[from].credits = -1;
+            credits[from].credits = credits[from].credits - 1;
             callBack(from + ': You have no joke credits left, try again later.');
-            return;
         }
         Cache.instance.put(this.cacheCreditSlug, -1, JSON.stringify(credits));
 
         // Get a joke from a random website
-        switch (Math.ceil(Math.random() * 1)) {
-            case 1:
-                this.getJokeOnelinefun(callBack);
-                break;
+        if (credits[from].credits > 0) {
+            switch (Math.ceil(Math.random() * 1)) {
+                case 1:
+                    this.getJokeOnelinefun(callBack);
+                    break;
+            }
         }
     }
 
@@ -56,7 +57,7 @@ export default class Users {
 
         // Set some data
         this.cacheCreditSlug = 'jokecredits';
-        this.initialCredits = 3;
+        this.initialCredits = 6;
 
         // Set the jokecredits
         Cache.instance.put(this.cacheCreditSlug, -1, "{}");

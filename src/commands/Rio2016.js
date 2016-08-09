@@ -2,6 +2,7 @@ var rio2016 = require( 'rio2016' );
 
 import Cache from '../common/Cache.js';
 import Config from '../config.js';
+import Log from '../common/Log.js';
 
 /**
  * This class keeps track of the 2016 olympics in rio and lets us know when
@@ -13,15 +14,21 @@ export default class Rio2016 {
 
         // Count belgian medals
         if (msg === '!medals') {
-            this.getBelgianMedals((medals) => {
+            var doCallBack = (medals) => {
                 callBack(
                     "Rio2016 Belgium medals: " +
                     medals.gold + " gold, " +
                     medals.silver + " silver, " +
                     medals.bronze + " bronze"
                 );
+            };
 
-            });
+            var medals = JSON.parse(Cache.instance.get('rio2016medals'));
+            if (!medals) {
+                this.getBelgianMedals(doCallBack);
+            } else {
+                doCallBack(medals);
+            }
         }
 
     }
@@ -60,6 +67,10 @@ export default class Rio2016 {
             }
 
             if (msg.length > 0) {
+
+                Rio2016.log(msg);
+                Cache.instance.put('rio2016medals', -1, JSON.stringify(medals));
+
                 for (var i in Config.irc.channels) {
                     callBack(Config.irc.channels[i], msg);
                 }
@@ -81,6 +92,10 @@ export default class Rio2016 {
         return [
             '^!medals'
         ];
+    }
+
+    static log(msg) {
+        Log.log("[Logger] " + msg);
     }
 
 }
