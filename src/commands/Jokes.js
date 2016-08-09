@@ -2,6 +2,7 @@ const cheerio = require("cheerio");
 const request = require("request");
 
 import Log from '../common/Log.js';
+import Cache from '../common/Cache.js';
 
 /**
  * Display a random joke
@@ -15,14 +16,32 @@ export default class Users {
         // Do logging
         this.log(from + " requested a joke");
 
+        // Check the joke credits
+        var credits = Cache.instance.get(this.cacheCreditSlug) || {};
+        if (!credits.hasOwnProperty(from)) {
+            credits[from] = {
+                credits: this.initialCredits,
+                reset: (new Date().getTime()) + 3600000
+            };
+        }
+        if (credits[from].reset < new Date().getTime()) {
+            credits[from] = {
+                credits: this.initialCredits,
+                reset: (new Date().getTime()) + 3600000
+            };
+        }
+        credits[from].credits = credits[from].credits - 1;
+        if (credits[from].credits === 0) {
+            credits[from].credits = -1;
+            callBack(from + ': You have no joke credits left, try again later.');
+            return;
+        }
+        Cache.instance.put(this.cacheCreditSlug, -1, JSON.stringify(credits));
+
         // Get a joke from a random website
         switch (Math.ceil(Math.random() * 1)) {
             case 1:
                 this.getJokeOnelinefun(callBack);
-                break;
-
-            case 2:
-                this.getJokeRD(callBack);
                 break;
         }
     }
@@ -31,6 +50,16 @@ export default class Users {
     	return [
     	    "^!joke"
     	];
+    }
+
+    static init() {
+
+        // Set some data
+        this.cacheCreditSlug = 'jokecredits';
+        this.initialCredits = 3;
+
+        // Set the jokecredits
+        Cache.instance.put(this.cacheCreditSlug, -1, "{}");
     }
 
     static log(msg) {
@@ -70,26 +99,4 @@ export default class Users {
         });
 
     }
-
-
-    /**
-     *  Get a joke from http://www.rd.com/jokes/one-liners/
-     */
-    static getJokeRD(callBack) {
-
-        // Load the page, get a random joke
-        request("http://www.rd.com/jokes/one-liners/", function (error, response, html) {
-
-            // Find the jokes and load a random one
-            var $ = cheerio.load(html);
-            var jokes = $(".Joke-Topic-one-liners:not(.Joke-Topic-funny-stories) .jokes-river--content");
-            var joke = jokes.eq(Math.floor(Math.random() * jokes.length)).text().replace(/[^\x00-\x7F]/g, "").replace(/(?:\r\n|\r|\n)/g, "");
-
-            // Send it back
-            callBack(joke);
-
-        });
-
-    }
-
 }

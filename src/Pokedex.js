@@ -8,6 +8,7 @@ import Facts from './commands/Facts.js';
 import Jokes from './commands/Jokes.js';
 import Logger from './commands/Logger.js';
 import PokedexCommand from './commands/PokedexCommand.js';
+import Rio2016 from './commands/Rio2016.js';
 import User from './commands/User.js';
 import Wiki from './commands/Wiki.js';
 
@@ -29,6 +30,7 @@ export default class Pokedex {
 	    	Jokes,
 	    	Logger,
 	    	PokedexCommand,
+	    	Rio2016,
 	    	User,
             Wiki,
 	    	Facts
@@ -39,6 +41,7 @@ export default class Pokedex {
 		this.catchAlls = [];
 		this.doKicks = [];
 		this.doTopics = [];
+		this.minuteInvokes = [];
         for (var i in classes) {
             var c = classes[i];
 
@@ -57,6 +60,10 @@ export default class Pokedex {
 		    // Add topic catches
 		    if (c.doTopic)
 		    	this.doTopics.push(c);
+
+		    // Add invokes for every minute
+		    if (c.minuteInvoke)
+				this.minuteInvokes.push(c);
 
 			// Add commands to the list
 			if (c.getCommands) {
@@ -148,6 +155,18 @@ export default class Pokedex {
 		    	dt.doTopic(channel, topic, nick, raw);
 		    }
 		});
+
+		// Set the minuteInvokes (every five minutes)
+		(function (client, minuteInvokes) {
+			setInterval(() => {
+				for (var i in minuteInvokes) {
+					var mi = minuteInvokes[i];
+					mi.minuteInvoke((channel, message) => {
+						client.say(channel, message);
+					});
+				}
+			}, 3e5);
+		} (this.client, this.minuteInvokes));
 
 		// Connect to irc!
 		this.client.connect();
