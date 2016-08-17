@@ -75,16 +75,21 @@ export default class Facts {
 			    });
 			});
 		}
-		else if ((matches = command.match(/^!fact ([\w\d-]+)/)) && matches !== null)
+		else if ((matches = command.match(/^!fact ([\w\d-:]+)/)) && matches !== null)
 		{
 		    // Is this fact in the cache?
 		    if (matches.length < 2 || !facts.hasOwnProperty(matches[1])) {
-				callBack("I do not know this fact");
+				callBack(from + ": I do not know this fact...");
+				return;
 		    }
 
 		    // Find the fact and its info
 		    var f = facts[matches[1]];
-		    callBack("I learned " + matches[1]  + " from " + f[0]  + "! It has been used " + f[2] + " times.");
+		    if (f) {
+		    	callBack("I learned " + matches[1]  + " from " + f[0]  + "! It has been used " + f[2] + " times.");
+		    } else {
+		    	callBack(from + ": I do not know this fact...");
+		    }
 		}
 		else if ((matches = command.match(new RegExp("^" + Config.irc.botname + ": !([\\w\\d-]+)(\\[(del)?\\])?( ([\\w\\d\\s\\/\\-\\%].*?))?$"))) && matches !== null)
 		{
@@ -132,7 +137,7 @@ export default class Facts {
             // Save all facts
 		    this.saveFacts(facts);
 		}
-		else if ((matches = command.match(/^!([\w\d-]+)(\s(.*?))?$/)) && matches !== null)
+		else if ((matches = command.match(/^!([\w\d-:]+)(\s(.*?))?$/)) && matches !== null)
 		{
 
 		    // Is this fact in the cache?
@@ -198,7 +203,7 @@ export default class Facts {
 
 		// Load existing facts from file
 		var fcs = this.factsCacheSlug;
-		fs.readFile(__dirname + '/../data/facts.json', function(err, data){
+		fs.readFile(__dirname + '/../data/facts.json', function(err, data) {
 		    if (err) return;
 		    Cache.instance.put(fcs, -1, data);
 		});

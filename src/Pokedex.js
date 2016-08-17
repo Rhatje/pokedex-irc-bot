@@ -13,6 +13,7 @@ import User from './commands/User.js';
 import Wiki from './commands/Wiki.js';
 
 // Libraries
+const fs = require('fs');
 const irc = require('irc');
 
 // The actual class
@@ -107,35 +108,49 @@ export default class Pokedex {
 		var commands = this.commands;
 		let msgevent = (from, to, message, raw) => {
 
-		    // Only read messages from channels or admins
-		    if (Config.irc.channels.indexOf(to) === -1 && Config.irc.admins.indexOf(from) === -1)
-				return;
+			fs.readFile(__dirname + '/data/ignore.json', (err, ignoredata) => {
+				if (err) {}
 
-		    // Don't reply to your own messages! moron!
-		    if (Config.irc.botname === from)
-				return;
+				// Make sure the user is not in the ignore list
+				if (ignoredata) {
+					ignoredata = JSON.parse(ignoredata);
+					for (var i in ignoredata) {
+						if (ignoredata[i] === from)
+							return;
+					}
+				}
 
-		    // Loop over commands to match one of them
-		    for (var i in commands) {
-	   	        var regex = i;
-                if (message.match(new RegExp(regex))) {
-				    commands[regex].doCommand(message, from, to, (msg) => {
-						if (msg.indexOf("/me ") === 0)
-						    client.action(to, msg.substr(4));
-						else
-				            client.say(to, msg);
+			    // Only read messages from channels or admins
+			    if (Config.irc.channels.indexOf(to) === -1 && Config.irc.admins.indexOf(from) === -1)
+					return;
 
-				    	Logger.catchAll(Config.irc.botname, to, msg);
-			    	});
-		 	    	break;
-		        }
-		    }
+			    // Don't reply to your own messages! moron!
+			    if (Config.irc.botname === from)
+					return;
 
-		    // Send the message to the catchalls
-		    for (var i in this.catchAlls) {
-		    	var ca = this.catchAlls[i];
-		    	ca.catchAll(from, to, message, raw);
-		    }
+			    // Loop over commands to match one of them
+			    for (var i in commands) {
+		   	        var regex = i;
+	                if (message.match(new RegExp(regex))) {
+					    commands[regex].doCommand(message, from, to, (msg) => {
+							if (msg.indexOf("/me ") === 0)
+							    client.action(to, msg.substr(4));
+							else
+					            client.say(to, msg);
+
+					    	Logger.catchAll(Config.irc.botname, to, msg);
+				    	});
+			 	    	break;
+			        }
+			    }
+
+			    // Send the message to the catchalls
+			    for (var i in this.catchAlls) {
+			    	var ca = this.catchAlls[i];
+			    	ca.catchAll(from, to, message, raw);
+			    }
+
+			});
 
         };
 

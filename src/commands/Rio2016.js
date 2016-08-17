@@ -1,4 +1,4 @@
-var rio2016 = require( 'rio2016' );
+const rio2016 = require( 'rio2016' );
 
 import Cache from '../common/Cache.js';
 import Config from '../config.js';
