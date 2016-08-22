@@ -2,6 +2,7 @@ import Channel from './common/Channel.js';
 import Config from './config.js';
 
 // Command classes
+//import CAH from './commands/CardsAgainstHumanity.js';
 import Countdown from './commands/Countdown.js';
 import EightBall from './commands/EightBall.js';
 import Facts from './commands/Facts.js';
@@ -26,6 +27,7 @@ export default class Pokedex {
 
         // Classes
         var classes = [
+        	//CAH,
 	    	Countdown,
 	    	EightBall,
 	    	Jokes,
