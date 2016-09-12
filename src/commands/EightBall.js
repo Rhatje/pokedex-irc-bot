@@ -28,13 +28,13 @@ export default class EightBall {
 
     static getCommands() {
         return [
-            "^!kan",
-            "^!heeft",
-            "^!is",
-            "^!moet",
-            "^!wil",
-            "^!zal",
-            "^!zou"
+            "^!kan ",
+            "^!heeft ",
+            "^!is ",
+            "^!moet ",
+            "^!wil ",
+            "^!zal ",
+            "^!zou "
         ]
     }
 

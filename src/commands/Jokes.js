@@ -49,7 +49,7 @@ export default class Users {
 
     static getCommands() {
     	return [
-    	    "^!joke"
+    	    "^!joke$"
     	];
     }
 
