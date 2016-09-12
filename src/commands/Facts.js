@@ -177,6 +177,10 @@ export default class Facts {
 				else
 				    return def;
 		    });
+		    fact = fact.replace(/%dice:(\d+):(\d+)%/g, function (all, min, max) {
+				
+				return Math.floor(Math.random() * (Number(max) - Number(min) + 1)) + Number(min);
+}); 
 
 		    // Send the value back
 	        callBack(fact);
