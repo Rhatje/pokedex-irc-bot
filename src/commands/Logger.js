@@ -9,6 +9,11 @@ export default class Logger {
 
         this._getConnection(function (connection) {
 
+            if (!connection) {
+                Logger.log('Invalid connection object, not logged...');
+                return;
+            }
+
             // Get channel info and insert the message
             Logger._getChannelAndUser(connection, raw, to, (userid) => {
 
@@ -98,7 +103,7 @@ export default class Logger {
             [to],
             (err, rows) => {
                 if (err) {
-                    Log.log("mysql error: " + err);
+                    Logger.log("mysql error: " + err);
                     return;
                 }
 
@@ -110,7 +115,7 @@ export default class Logger {
                         [ raw.user, raw.host ],
                         (err, rows) => {
                             if (err) {
-                                Log.log("mysql error: " + err);
+                                Logger.log("mysql error: " + err);
                                 return;
                             }
 
@@ -177,7 +182,7 @@ export default class Logger {
             connection.connect();
 
             // Prevent errors
-            connection.on('error', (err) => { console.log('mysql error: ' + err); });
+            connection.on('error', (err) => { Logger.log('global error: ' + err); });
 
             // Send the connection object back
             callBack(connection);
