@@ -18,9 +18,7 @@ export default class Facts {
 		    callBack = (msg) => {};
 
 	        // Load all available facts
-		var facts = JSON.parse(
-		    Cache.instance.get(this.factsCacheSlug)
-		);
+		var facts = Cache.instance.get(this.factsCacheSlug);
 
 		// What are we doing?
 		var matches;
@@ -178,9 +176,9 @@ export default class Facts {
 				    return def;
 		    });
 		    fact = fact.replace(/%dice:(\d+):(\d+)%/g, function (all, min, max) {
-				
+
 				return Math.floor(Math.random() * (Number(max) - Number(min) + 1)) + Number(min);
-}); 
+});
 
 		    // Send the value back
 	        callBack(fact);
@@ -230,7 +228,7 @@ export default class Facts {
 		if (JSON.stringify(facts).length === 0) return;
 
 		// Save the list to the cache
-		Cache.instance.put(this.factsCacheSlug, -1, JSON.stringify(facts));
+		Cache.instance.put(this.factsCacheSlug, -1, facts);
 
 		// Save the list to the file
 		fs.writeFile(__dirname + '/../data/facts.json', JSON.stringify(facts));

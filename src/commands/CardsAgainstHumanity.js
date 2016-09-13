@@ -1,8 +1,6 @@
 const _ = require('underscore');
 const fs = require('fs');
 
-//import Cache from '../common/Cache.js';
-
 /**
  * match random Cards Against Humanity cards
  */

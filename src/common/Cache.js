@@ -38,11 +38,21 @@ export default class Cache {
     /**
      *	Get an object from the cache by name
      */
-    get(key) {
+    get(key, def) {
+    	def = def || null;
+
+		// Get the value
+		var value = def;
 	 	if (key in this.cache)
-		    return this.cache[key].value;
-		else
-		    return null;
+		    value = this.cache[key].value;
+
+		// Try parsin json data
+		try {
+	        return JSON.parse(value);
+	    }
+	    catch (e) {
+	        return value;
+	    }
     }
 
 
@@ -51,6 +61,12 @@ export default class Cache {
      *	Expiration time in minutes
      */
     put(key, time, value) {
+
+    	// Make sure the value is a string
+    	if (typeof value !== "string") {
+    		value = JSON.stringify(value);
+    	}
+
 	 	this.cache[key] = {
 		    value: value,
 		    maxage: time === -1 ? -1 : new Date().getTime() + (time * 6e4)

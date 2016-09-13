@@ -7,9 +7,11 @@ import Log from './common/Log.js';
 
     // Verry safe crash handling ;)
     process.on('uncaughtException', function (err) {
-        Log.log("[!Pokedex!] Error: " + err);
+        Log.log("[!Pokedex!] Error: ");
+        Log.log(err);
     });
 
+    // Start the pokedex bot!
     let pokedex = new Pokedex();
     pokedex.init();
 

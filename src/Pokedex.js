@@ -8,6 +8,7 @@ import EightBall from './commands/EightBall.js';
 import Facts from './commands/Facts.js';
 import Jokes from './commands/Jokes.js';
 import Logger from './commands/Logger.js';
+import PingPong from './commands/PingPong.js';
 import PokedexCommand from './commands/PokedexCommand.js';
 import Rio2016 from './commands/Rio2016.js';
 import User from './commands/User.js';
@@ -32,6 +33,7 @@ export default class Pokedex {
 	    	EightBall,
 	    	Jokes,
 	    	Logger,
+	    	PingPong,
 	    	PokedexCommand,
 	    	Rio2016,
 	    	User,
@@ -83,7 +85,9 @@ export default class Pokedex {
 		// Create irc connection
 		this.client = new irc.Client(Config.irc.server, Config.irc.botname, {
     	    channels: Config.irc.channels,
-	    	autoConnect: false
+	    	autoConnect: false,
+	    	autoRejoin: true,
+	    	retryCount: 10
         });
 
 		// Prevent message flooding
