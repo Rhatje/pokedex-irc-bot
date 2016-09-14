@@ -171,7 +171,7 @@ export default class Facts {
 		    });
 		    fact = fact.replace(/%param(:(.*?))?%/g, function (a, b, def) {
 				if (matches.length > 3 && matches[3] !== undefined)
-				    return matches[3];
+				    return matches[3].trim();
 				else
 				    return def;
 		    });
